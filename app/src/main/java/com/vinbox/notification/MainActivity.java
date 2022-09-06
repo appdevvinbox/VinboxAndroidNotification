@@ -19,7 +19,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.vinbox.notification.databinding.ActivityMainBinding;
-import com.vinbox.vinmax.FirebaseNotification;
+import com.vinbox.vinmax.VinmaxNotification;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,9 +36,12 @@ public class MainActivity extends AppCompatActivity {
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) ==
                 PackageManager.PERMISSION_GRANTED) {
-            FirebaseNotification firebaseNotification = new FirebaseNotification();
-            firebaseNotification.initialize(this, R.drawable.default_notification, MainActivity.class,
-                    getResources().getString(R.string.default_notification_channel_id));
+
+            new VinmaxNotification(this,
+                    getResources().getString(R.string.app_name),
+                    R.drawable.default_notification,
+                    this.getPackageName(),
+                    MainActivity.class).initialize();
         }
         else{
             AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();

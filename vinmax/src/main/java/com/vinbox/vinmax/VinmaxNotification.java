@@ -2,6 +2,7 @@ package com.vinbox.vinmax;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -12,24 +13,42 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.vinbox.vinmax.build.api.ApiClient;
 import com.vinbox.vinmax.build.api.ApiInterface;
 import com.vinbox.vinmax.build.configure.Configuration;
+import com.vinbox.vinmax.build.configure.Setting;
 
 import java.util.HashMap;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.NotificationManagerCompat;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class FirebaseNotification {
+public class VinmaxNotification {
     ApiInterface apiInterface = ApiClient.getRetrofit().create(ApiInterface.class);
-    private static final String TAG = "VinmaxFCMNotification";
-    public void initialize(Context context, int icon, final Class<? extends Activity> mainActivity, String notificationChannelId){
+    private static final String TAG = "com.vinbox.vinmax";
 
-        Settings.activity = mainActivity;
-        Settings.context = context;
-        Settings.notificationIcon = icon;
-        Settings.notificationChannelId = notificationChannelId;
+    public VinmaxNotification(Context context, String title, int icon, String channel,
+                              final Class<? extends Activity> activity){
+        Setting.title = title;
+        Setting.activity = activity;
+        Setting.context = context;
+        Setting.notificationIcon = icon;
+        Setting.notificationChannelId = channel;
+    }
+    public void initialize(){
+        if(!NotificationManagerCompat.from(Setting.context).areNotificationsEnabled()){
+            new AlertDialog.Builder(Setting.context)
+                    .setTitle(Setting.title)
+                    .setMessage("Please allow notification permission for "+ Setting.title+", to receive notification from vinmax platform.")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {}
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+            return;
+        }
 
         try{
             FirebaseMessaging.getInstance();
@@ -41,7 +60,7 @@ public class FirebaseNotification {
                     .setProjectId(Configuration.FIREBASE_PROJECT_ID)
                     .setDatabaseUrl(Configuration.FIREBASE_DB_URL);
 
-            FirebaseApp.initializeApp(context, builder.build());
+            FirebaseApp.initializeApp(Setting.context, builder.build());
         }
 
         FirebaseMessaging.getInstance().getToken()

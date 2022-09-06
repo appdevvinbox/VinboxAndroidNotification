@@ -23,7 +23,7 @@
         </activity>
 
         <service
-            android:name="com.vinbox.vinmax.fcm.MyFirebaseMessagingService"
+            android:name="com.vinbox.vinmax.MessagingService"
             tools:ignore="WrongManifestParent">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

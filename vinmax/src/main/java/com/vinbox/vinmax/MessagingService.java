@@ -1,4 +1,4 @@
-package com.vinbox.vinmax.fcm;
+package com.vinbox.vinmax;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -6,25 +6,20 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
-import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.vinbox.vinmax.Settings;
+import com.vinbox.vinmax.build.configure.Setting;
 
-public class MyFirebaseMessagingService extends FirebaseMessagingService {
+public class MessagingService extends FirebaseMessagingService {
     private static final String TAG = "MyFirebaseMsgService";
 
 
@@ -41,7 +36,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private void sendNotification(RemoteMessage remoteMessage) {
         Bitmap notificationBigPicture;
         RemoteMessage.Notification notification = remoteMessage.getNotification();
-        Intent intent = new Intent(this, Settings.activity);
+        Intent intent = new Intent(this, Setting.activity);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("Notification", notification.getTitle());
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
@@ -67,7 +62,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
 
         notificationBuilder.setContentIntent(pendingIntent)
-                .setSmallIcon(Settings.notificationIcon)
+                .setSmallIcon(Setting.notificationIcon)
                 .setContentTitle(notification.getTitle())
                 .setContentText(notification.getBody())
                 .setPriority(Notification.PRIORITY_MAX)
@@ -80,10 +75,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
         {
             NotificationChannel channel = new NotificationChannel(
-                    Settings.notificationChannelId, "vinmax_notification",
+                    Setting.notificationChannelId, "vinmax_notification",
                     NotificationManager.IMPORTANCE_HIGH);
             notificationManager.createNotificationChannel(channel);
-            notificationBuilder.setChannelId(Settings.notificationChannelId);
+            notificationBuilder.setChannelId(Setting.notificationChannelId);
         }
         notificationManager.notify(0, notificationBuilder.build());
     }
