@@ -1,6 +1,6 @@
 package com.vinbox.vinmax.build.api;
 
-import com.vinbox.vinmax.build.configure.Configuration;
+import com.vinbox.vinmax.build.configure.GlobalData;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +25,7 @@ public class ApiClient {
         OkHttpClient client = getClient();
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
-                    .baseUrl(Configuration.API_URL)
+                    .baseUrl(GlobalData.API_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(client)
                     .build();

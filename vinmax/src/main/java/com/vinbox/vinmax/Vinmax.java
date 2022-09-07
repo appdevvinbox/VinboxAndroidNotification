@@ -12,8 +12,8 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.vinbox.vinmax.build.api.ApiClient;
 import com.vinbox.vinmax.build.api.ApiInterface;
-import com.vinbox.vinmax.build.configure.Configuration;
-import com.vinbox.vinmax.build.configure.Setting;
+import com.vinbox.vinmax.build.configure.GlobalData;
+import com.vinbox.vinmax.build.configure.AppReflection;
 
 import java.util.HashMap;
 
@@ -25,23 +25,27 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class VinmaxNotification {
+public class Vinmax implements Vinbox {
     ApiInterface apiInterface = ApiClient.getRetrofit().create(ApiInterface.class);
     private static final String TAG = "com.vinbox.vinmax";
 
-    public VinmaxNotification(Context context, String title, int icon, String channel,
-                              final Class<? extends Activity> activity){
-        Setting.title = title;
-        Setting.activity = activity;
-        Setting.context = context;
-        Setting.notificationIcon = icon;
-        Setting.notificationChannelId = channel;
+    public Vinmax(Context context, String title, int icon, String channel,
+                  final Class<? extends Activity> activity){
+        AppReflection.title = title;
+        AppReflection.activity = activity;
+        AppReflection.context = context;
+        AppReflection.notificationIcon = icon;
+        AppReflection.notificationChannelId = channel;
     }
+
+    /**
+     * Call this method to intilize Vinmax enabled push notification
+     */
     public void initialize(){
-        if(!NotificationManagerCompat.from(Setting.context).areNotificationsEnabled()){
-            new AlertDialog.Builder(Setting.context)
-                    .setTitle(Setting.title)
-                    .setMessage("Please allow notification permission for "+ Setting.title+", to receive notification from vinmax platform.")
+        if(!NotificationManagerCompat.from(AppReflection.context).areNotificationsEnabled()){
+            new AlertDialog.Builder(AppReflection.context)
+                    .setTitle(AppReflection.title)
+                    .setMessage("Please allow notification permission for "+ AppReflection.title+", to receive notification from vinmax platform.")
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {}
                     })
@@ -55,12 +59,12 @@ public class VinmaxNotification {
         }
         catch (IllegalStateException e){
             FirebaseOptions.Builder builder = new FirebaseOptions.Builder()
-                    .setApiKey(Configuration.FIREBASE_API_KEY)
-                    .setApplicationId(Configuration.FIREBASE_APPLICATION_ID)
-                    .setProjectId(Configuration.FIREBASE_PROJECT_ID)
-                    .setDatabaseUrl(Configuration.FIREBASE_DB_URL);
+                    .setApiKey(GlobalData.FIREBASE_API_KEY)
+                    .setApplicationId(GlobalData.FIREBASE_APPLICATION_ID)
+                    .setProjectId(GlobalData.FIREBASE_PROJECT_ID)
+                    .setDatabaseUrl(GlobalData.FIREBASE_DB_URL);
 
-            FirebaseApp.initializeApp(Setting.context, builder.build());
+            FirebaseApp.initializeApp(AppReflection.context, builder.build());
         }
 
         FirebaseMessaging.getInstance().getToken()
@@ -72,14 +76,17 @@ public class VinmaxNotification {
                         return;
                     }
 
-                    String token = task.getResult();
-                    sendRegistrationToServer(token);
+                    Log.d(TAG, "Vinbox device token: " + task.getResult());
+                    postToken(task.getResult());
                 }
             });
     }
 
-
-    private void sendRegistrationToServer(String token) {
+    /**
+     * This method would send device token to vinmax api
+     * @param token
+     */
+    private void postToken(String token) {
         HashMap<String, String> map = new HashMap<>();
         map.put("token", "" + token);
         map.put("platform", "Android");
@@ -90,20 +97,20 @@ public class VinmaxNotification {
             public void onResponse(Call<String> call, Response<String> response) {
                 if(response.isSuccessful()){
                     if(response.body() == "200"){
-                        Log.w(TAG, "sendRegistrationToServer: success");
+                        Log.w(TAG, "postToken: success");
                     }
                     else{
-                        Log.w(TAG, "sendRegistrationToServer: failure");
+                        Log.w(TAG, "postToken: failure");
                     }
                 }
                 else{
-                    Log.w(TAG, "sendRegistrationToServer: failure");
+                    Log.w(TAG, "postToken: failure");
                 }
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Log.w(TAG, "sendRegistrationToServer: failure");
+                Log.w(TAG, "postToken: failure");
             }
         });
     }

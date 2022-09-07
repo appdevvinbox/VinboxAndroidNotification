@@ -3,7 +3,7 @@ package com.vinbox.vinmax.build.configure;
 import android.app.Activity;
 import android.content.Context;
 
-public class Setting {
+public class AppReflection {
     public static String title;
     public static Context context;
     public static int notificationIcon;

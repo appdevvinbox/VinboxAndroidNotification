@@ -19,7 +19,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.vinbox.notification.databinding.ActivityMainBinding;
-import com.vinbox.vinmax.VinmaxNotification;
+import com.vinbox.vinmax.Vinmax;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,27 +34,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) ==
-                PackageManager.PERMISSION_GRANTED) {
-
-            new VinmaxNotification(this,
-                    getResources().getString(R.string.app_name),
-                    R.drawable.default_notification,
-                    this.getPackageName(),
-                    MainActivity.class).initialize();
-        }
-        else{
-            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-            alertDialog.setTitle(R.string.app_name);
-            alertDialog.setMessage(getResources().getString(R.string.app_not_support_notification));
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-            alertDialog.show();
-        }
+        new Vinmax(this,
+                getResources().getString(R.string.app_name),
+                R.drawable.default_notification,
+                this.getPackageName(),
+                MainActivity.class).initialize();
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

@@ -17,12 +17,15 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.vinbox.vinmax.build.configure.Setting;
+import com.vinbox.vinmax.build.configure.AppReflection;
 
 public class MessagingService extends FirebaseMessagingService {
-    private static final String TAG = "MyFirebaseMsgService";
+    private static final String TAG = "com.vinbox.vinmax";
 
-
+    /**
+     * This method received notification data from fcm
+     * @param remoteMessage
+     */
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         if (remoteMessage.getData() != null) {
@@ -31,12 +34,14 @@ public class MessagingService extends FirebaseMessagingService {
         }
     }
 
-    //This method is only generating push notification
-    //It is same as we did in earlier posts
+    /**
+     * This method used to send notification
+     * @param remoteMessage
+     */
     private void sendNotification(RemoteMessage remoteMessage) {
         Bitmap notificationBigPicture;
         RemoteMessage.Notification notification = remoteMessage.getNotification();
-        Intent intent = new Intent(this, Setting.activity);
+        Intent intent = new Intent(this, AppReflection.activity);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("Notification", notification.getTitle());
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
@@ -62,7 +67,7 @@ public class MessagingService extends FirebaseMessagingService {
         }
 
         notificationBuilder.setContentIntent(pendingIntent)
-                .setSmallIcon(Setting.notificationIcon)
+                .setSmallIcon(AppReflection.notificationIcon)
                 .setContentTitle(notification.getTitle())
                 .setContentText(notification.getBody())
                 .setPriority(Notification.PRIORITY_MAX)
@@ -75,10 +80,12 @@ public class MessagingService extends FirebaseMessagingService {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
         {
             NotificationChannel channel = new NotificationChannel(
-                    Setting.notificationChannelId, "vinmax_notification",
+                    AppReflection.notificationChannelId,
+                    AppReflection.title,
                     NotificationManager.IMPORTANCE_HIGH);
+
             notificationManager.createNotificationChannel(channel);
-            notificationBuilder.setChannelId(Setting.notificationChannelId);
+            notificationBuilder.setChannelId(AppReflection.notificationChannelId);
         }
         notificationManager.notify(0, notificationBuilder.build());
     }
