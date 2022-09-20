@@ -14,8 +14,7 @@ import com.vinbox.vinmax.build.api.ApiClient;
 import com.vinbox.vinmax.build.api.ApiInterface;
 import com.vinbox.vinmax.build.configure.GlobalData;
 import com.vinbox.vinmax.build.configure.AppReflection;
-import org.json.JSONException;
-import org.json.JSONObject;
+
 import java.util.HashMap;
 
 import androidx.annotation.NonNull;
@@ -46,7 +45,7 @@ public class Vinmax implements Vinbox {
         if(!NotificationManagerCompat.from(AppReflection.context).areNotificationsEnabled()){
             new AlertDialog.Builder(AppReflection.context)
                     .setTitle(AppReflection.title)
-                    .setMessage("Please allow notification permission for "+ AppReflection.title+", to receive notification from vinmax platform.")
+                    .setMessage("Please allow notification permission for "+ AppReflection.title+", to receive notification.")
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {}
                     })
@@ -77,7 +76,7 @@ public class Vinmax implements Vinbox {
                         return;
                     }
 
-                    Log.d(TAG, "Vinbox device token: " + task.getResult());
+                    //Log.d(TAG, "Vinbox device token: " + task.getResult());
                     postToken(task.getResult());
                 }
             });
@@ -91,29 +90,27 @@ public class Vinmax implements Vinbox {
         HashMap<String, String> map = new HashMap<>();
         map.put("token", "" + token);
         map.put("platform", "Android");
-        Call<ResponseBody> call = apiInterface.postSubscription(map);
+        Call<String> call = apiInterface.postSubscription(map);
 
-        call.enqueue(new Callback<ResponseBody>() {
+        call.enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                String myResponse = response.body().string();
-                Log.w(TAG,myResponse);
+            public void onResponse(Call<String> call, Response<String> response) {
                 if(response.isSuccessful()){                    
                     if(response.body() == "200"){
                         Log.w(TAG, "postToken: success");
                     }
                     else{
-                        Log.w(TAG, "postToken: failure - 1");
+                        Log.w(TAG, "postToken: failure");
                     }
                 }
                 else{
-                    Log.w(TAG, "postToken: failure - 2");
+                    Log.w(TAG, "postToken: failure");
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.w(TAG, "postToken: failure - onFailure");
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.w(TAG, "postToken: failure");
             }
         });
     }
