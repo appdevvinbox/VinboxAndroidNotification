@@ -31,6 +31,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MessagingService extends FirebaseMessagingService {
+    ApiInterface apiInterface = ApiClient.getRetrofit().create(ApiInterface.class);
     private static final String TAG = "com.vinbox.vinmax";
 
     @Override
