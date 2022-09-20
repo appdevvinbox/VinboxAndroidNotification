@@ -95,7 +95,7 @@ public class Vinmax implements Vinbox {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                Log.w(TAG, new Gson().toJson(response));
+                Log.w(TAG, response.errorBody());
                 if(response.isSuccessful()){                    
                     if(response.body() == "200"){
                         Log.w(TAG, "postToken: success");
