@@ -91,7 +91,7 @@ public class Vinmax implements Vinbox {
         HashMap<String, String> map = new HashMap<>();
         map.put("token", "" + token);
         map.put("platform", "Android");
-        Call<String> call = apiInterface.postSubscription(map);
+        Call<ResponseBody> call = apiInterface.postSubscription(map);
 
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -112,7 +112,7 @@ public class Vinmax implements Vinbox {
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.w(TAG, "postToken: failure - onFailure");
             }
         });
