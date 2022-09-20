@@ -14,7 +14,8 @@ import com.vinbox.vinmax.build.api.ApiClient;
 import com.vinbox.vinmax.build.api.ApiInterface;
 import com.vinbox.vinmax.build.configure.GlobalData;
 import com.vinbox.vinmax.build.configure.AppReflection;
-
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.util.HashMap;
 
 import androidx.annotation.NonNull;
@@ -95,7 +96,8 @@ public class Vinmax implements Vinbox {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                Log.w(TAG, response.errorBody());
+                String myResponse = response.body().string();
+                Log.w(TAG,myResponse);
                 if(response.isSuccessful()){                    
                     if(response.body() == "200"){
                         Log.w(TAG, "postToken: success");
