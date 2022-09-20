@@ -10,6 +10,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingService;
 import com.vinbox.vinmax.build.api.ApiClient;
 import com.vinbox.vinmax.build.api.ApiInterface;
 import com.vinbox.vinmax.build.configure.GlobalData;
@@ -67,21 +68,30 @@ public class Vinmax implements Vinbox {
             FirebaseApp.initializeApp(AppReflection.context, builder.build());
         }
 
-        FirebaseMessaging.getInstance().getToken()
-            .addOnCompleteListener(new OnCompleteListener<String>() {
-                @Override
-                public void onComplete(@NonNull Task<String> task) {
-                    if (!task.isSuccessful()) {
-                        Log.w(TAG, "Fetching FCM registration token failed.", task.getException());
-                        return;
-                    }
+        // FirebaseMessaging.getInstance().getToken()
+        //     .addOnCompleteListener(new OnCompleteListener<String>() {
+        //         @Override
+        //         public void onComplete(@NonNull Task<String> task) {
+        //             if (!task.isSuccessful()) {
+        //                 Log.w(TAG, "Fetching FCM registration token failed.", task.getException());
+        //                 return;
+        //             }
 
-                    //Log.d(TAG, "Vinbox device token: " + task.getResult());
-                    postToken(task.getResult());
-                }
-            });
+        //             //Log.d(TAG, "Vinbox device token: " + task.getResult());
+        //             postToken(task.getResult());
+        //         }
+        //     });
     }
 
+    @Override
+    public void onNewToken(@NonNull String token) {
+        Log.d(TAG, "Refreshed token: " + token);
+
+        // If you want to send messages to this application instance or
+        // manage this apps subscriptions on the server side, send the
+        // FCM registration token to your app server.
+        postToken(token);
+    }
     /**
      * This method would send device token to vinmax api
      * @param token
