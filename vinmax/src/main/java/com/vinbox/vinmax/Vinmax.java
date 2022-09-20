@@ -83,45 +83,4 @@ public class Vinmax implements Vinbox {
         //     });
     }
 
-    @Override
-    public void onNewToken(@NonNull String token) {
-        Log.d(TAG, "Refreshed token: " + token);
-
-        // If you want to send messages to this application instance or
-        // manage this apps subscriptions on the server side, send the
-        // FCM registration token to your app server.
-        postToken(token);
-    }
-    /**
-     * This method would send device token to vinmax api
-     * @param token
-     */
-    private void postToken(String token) {
-        HashMap<String, String> map = new HashMap<>();
-        map.put("token", "" + token);
-        map.put("platform", "Android");
-        Call<String> call = apiInterface.postSubscription(map);
-
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                if(response.isSuccessful()){                    
-                    if(response.body() == "200"){
-                        Log.w(TAG, "postToken: success");
-                    }
-                    else{
-                        Log.w(TAG, "postToken: failure");
-                    }
-                }
-                else{
-                    Log.w(TAG, "postToken: failure");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Log.w(TAG, "postToken: failure");
-            }
-        });
-    }
 }
