@@ -96,7 +96,6 @@ public class Vinmax implements Vinbox {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 Log.w(TAG, response.body());
-                Log.w(TAG, response);
                 if(response.isSuccessful()){                    
                     if(response.body() == "200"){
                         Log.w(TAG, "postToken: success");
