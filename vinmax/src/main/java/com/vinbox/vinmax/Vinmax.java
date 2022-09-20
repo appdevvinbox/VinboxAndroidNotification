@@ -93,9 +93,9 @@ public class Vinmax implements Vinbox {
         map.put("platform", "Android");
         Call<String> call = apiInterface.postSubscription(map);
 
-        call.enqueue(new Callback<String>() {
+        call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 String myResponse = response.body().string();
                 Log.w(TAG,myResponse);
                 if(response.isSuccessful()){                    
@@ -103,17 +103,17 @@ public class Vinmax implements Vinbox {
                         Log.w(TAG, "postToken: success");
                     }
                     else{
-                        Log.w(TAG, "postToken: failure");
+                        Log.w(TAG, "postToken: failure - 1");
                     }
                 }
                 else{
-                    Log.w(TAG, "postToken: failure");
+                    Log.w(TAG, "postToken: failure - 2");
                 }
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Log.w(TAG, "postToken: failure");
+                Log.w(TAG, "postToken: failure - onFailure");
             }
         });
     }
