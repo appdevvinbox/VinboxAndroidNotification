@@ -6,7 +6,7 @@ package com.vinbox.vinmax.build.configure;
  */
 
 public class GlobalData {
-    public static String API_URL = "https://t1.vsu1t.com/fcmwebpush/apppush/subscription";
+    public static String API_URL = "https://t1.vsu1t.com/fcmwebpush/apppush/subscription/";
     public static String FIREBASE_PROJECT_ID = "central-bank-of-india-3a489";
     public static String FIREBASE_API_KEY = "AIzaSyB0TFkcGtlsRQ18MOPefWff6t8K9JyPdjs";
     public static String FIREBASE_DB_URL = "https://central-bank-of-india-3a489-default-rtdb.firebaseio.com/";
