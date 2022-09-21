@@ -18,9 +18,30 @@ import com.bumptech.glide.request.FutureTarget;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.vinbox.vinmax.build.configure.AppReflection;
+import com.vinbox.vinmax.build.api.ApiClient;
+import com.vinbox.vinmax.build.api.ApiInterface;
+import com.vinbox.vinmax.build.configure.GlobalData;
+import java.util.HashMap;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.NotificationManagerCompat;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MessagingService extends FirebaseMessagingService {
+    ApiInterface apiInterface = ApiClient.getRetrofit().create(ApiInterface.class);
     private static final String TAG = "com.vinbox.vinmax";
+
+    @Override
+    public void onNewToken(@NonNull String token) {
+
+        // If you want to send messages to this application instance or
+        // manage this apps subscriptions on the server side, send the
+        // FCM registration token to your app server.
+        postToken(token);
+    }
 
     /**
      * This method received notification data from fcm
@@ -89,4 +110,37 @@ public class MessagingService extends FirebaseMessagingService {
         }
         notificationManager.notify(0, notificationBuilder.build());
     }
+
+    /**
+     * This method would send device token to vinmax api
+     * @param token
+     */
+    private void postToken(String token) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("token", "" + token);
+        map.put("platform", "Android");
+        Call<String> call = apiInterface.postSubscription(map);
+
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if(response.isSuccessful()){                    
+                    if(response.body() == "200"){
+                        Log.w(TAG, "postToken: success");
+                    }
+                    else{
+                        Log.w(TAG, "postToken: failure");
+                    }
+                }
+                else{
+                    Log.w(TAG, "postToken: failure");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.w(TAG, "postToken: failure");
+            }
+        });
+    }    
 }

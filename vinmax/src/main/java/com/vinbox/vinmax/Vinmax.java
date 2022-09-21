@@ -10,6 +10,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingService;
 import com.vinbox.vinmax.build.api.ApiClient;
 import com.vinbox.vinmax.build.api.ApiInterface;
 import com.vinbox.vinmax.build.configure.GlobalData;
@@ -45,7 +46,7 @@ public class Vinmax implements Vinbox {
         if(!NotificationManagerCompat.from(AppReflection.context).areNotificationsEnabled()){
             new AlertDialog.Builder(AppReflection.context)
                     .setTitle(AppReflection.title)
-                    .setMessage("Please allow notification permission for "+ AppReflection.title+", to receive notification from vinmax platform.")
+                    .setMessage("Please allow notification permission for "+ AppReflection.title+", to receive notification.")
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {}
                     })
@@ -67,53 +68,19 @@ public class Vinmax implements Vinbox {
             FirebaseApp.initializeApp(AppReflection.context, builder.build());
         }
 
-        FirebaseMessaging.getInstance().getToken()
-            .addOnCompleteListener(new OnCompleteListener<String>() {
-                @Override
-                public void onComplete(@NonNull Task<String> task) {
-                    if (!task.isSuccessful()) {
-                        Log.w(TAG, "Fetching FCM registration token failed.", task.getException());
-                        return;
-                    }
+        // FirebaseMessaging.getInstance().getToken()
+        //     .addOnCompleteListener(new OnCompleteListener<String>() {
+        //         @Override
+        //         public void onComplete(@NonNull Task<String> task) {
+        //             if (!task.isSuccessful()) {
+        //                 Log.w(TAG, "Fetching FCM registration token failed.", task.getException());
+        //                 return;
+        //             }
 
-                    Log.d(TAG, "Vinbox device token: " + task.getResult());
-                    postToken(task.getResult());
-                }
-            });
+        //             //Log.d(TAG, "Vinbox device token: " + task.getResult());
+        //             postToken(task.getResult());
+        //         }
+        //     });
     }
 
-    /**
-     * This method would send device token to vinmax api
-     * @param token
-     */
-    private void postToken(String token) {
-        HashMap<String, String> map = new HashMap<>();
-        map.put("token", "" + token);
-        map.put("platform", "Android");
-        Call<String> call = apiInterface.postSubscription(map);
-
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                Log.w(TAG, response.body());
-                Log.w(TAG, response);
-                if(response.isSuccessful()){                    
-                    if(response.body() == "200"){
-                        Log.w(TAG, "postToken: success");
-                    }
-                    else{
-                        Log.w(TAG, "postToken: failure");
-                    }
-                }
-                else{
-                    Log.w(TAG, "postToken: failure");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Log.w(TAG, "postToken: failure");
-            }
-        });
-    }
 }
